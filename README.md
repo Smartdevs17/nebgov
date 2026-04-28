@@ -13,28 +13,28 @@ NebGov is the canonical governance framework for the Stellar ecosystem — a mod
 
 ## What It Does
 
-| Feature | Description |
-|---|---|
-| Proposal lifecycle | Create, vote, queue, and execute on-chain proposals |
-| Timelock execution | Mandatory delay between passing and execution |
-| Token-weighted voting | Snapshot voting power from any SEP-41 token |
-| Delegation | Delegate voting power to any address |
-| Multi-sig treasury | DAO-controlled treasury with configurable threshold |
-| Permissionless factory | Deploy your own governance instance in one call |
+| Feature                | Description                                         |
+| ---------------------- | --------------------------------------------------- |
+| Proposal lifecycle     | Create, vote, queue, and execute on-chain proposals |
+| Timelock execution     | Mandatory delay between passing and execution       |
+| Token-weighted voting  | Snapshot voting power from any SEP-41 token         |
+| Delegation             | Delegate voting power to any address                |
+| Multi-sig treasury     | DAO-controlled treasury with configurable threshold |
+| Permissionless factory | Deploy your own governance instance in one call     |
 
 ---
 
 ## Packages
 
-| Package | Description |
-|---|---|
-| `contracts/governor` | Core governance contract (Rust/Soroban) |
-| `contracts/timelock` | Delayed execution controller (Rust/Soroban) |
-| `contracts/token-votes` | Voting power with checkpointing (Rust/Soroban) |
+| Package                      | Description                                     |
+| ---------------------------- | ----------------------------------------------- |
+| `contracts/governor`         | Core governance contract (Rust/Soroban)         |
+| `contracts/timelock`         | Delayed execution controller (Rust/Soroban)     |
+| `contracts/token-votes`      | Voting power with checkpointing (Rust/Soroban)  |
 | `contracts/governor-factory` | Permissionless governor deployer (Rust/Soroban) |
-| `contracts/treasury` | Multi-sig treasury (Rust/Soroban) |
-| `sdk/` | TypeScript SDK (`@nebgov/sdk`) |
-| `app/` | Next.js governance dashboard |
+| `contracts/treasury`         | Multi-sig treasury (Rust/Soroban)               |
+| `sdk/`                       | TypeScript SDK (`@nebgov/sdk`)                  |
+| `app/`                       | Next.js governance dashboard                    |
 
 ---
 
@@ -89,6 +89,7 @@ propose() → Governor → [voting period] → queue() → Timelock → execute(
 See [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
 
 Issues are labeled by complexity:
+
 - `complexity: trivial`
 - `complexity: medium`
 - `complexity: high`

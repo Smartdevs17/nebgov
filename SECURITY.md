@@ -3,7 +3,7 @@
 ## Supported Versions
 
 | Version | Supported |
-|---------|-----------|
+| ------- | --------- |
 | latest  | yes       |
 | < 0.1.0 | no        |
 
@@ -12,10 +12,12 @@
 **Please do not open a public GitHub issue for security vulnerabilities.**
 
 Report vulnerabilities privately via one of:
+
 - GitHub Security Advisories: https://github.com/nebgov/nebgov/security/advisories/new
 - Email: security@nebgov.xyz
 
 Include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Affected contracts/components
@@ -32,6 +34,7 @@ You will receive an acknowledgement within 48 hours.
 ## Scope
 
 In scope:
+
 - governor
 - timelock
 - token-votes
@@ -40,6 +43,7 @@ In scope:
 - governor-factory contracts
 
 Out of scope:
+
 - frontend UI bugs (open a regular issue)
 - third-party dependencies
 
@@ -72,13 +76,17 @@ All Rust dependencies are automatically scanned for known security vulnerabiliti
 If a vulnerability is flagged that doesn't apply to our usage or is a false positive, you can suppress it using one of these methods:
 
 #### Method 1: Using .npmrc (Recommended)
+
 Create or update `.npmrc` in the workspace root:
+
 ```
 audit-level=high
 ```
 
 #### Method 2: Package.json Overrides
+
 Add to the root `package.json`:
+
 ```json
 {
   "pnpm": {
@@ -90,7 +98,9 @@ Add to the root `package.json`:
 ```
 
 #### Method 3: Temporary Bypass
+
 For temporary issues during development:
+
 ```bash
 pnpm audit --audit-level=high --ignore-registry-errors
 ```
