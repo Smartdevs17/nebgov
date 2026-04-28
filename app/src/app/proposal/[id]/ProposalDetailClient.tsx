@@ -66,6 +66,8 @@ export default function ProposalDetailClient({ params }: Props) {
   const [metadataLoading, setMetadataLoading] = useState(false);
   const [hashMismatched, setHashMismatched] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [quorumReached, setQuorumReached] = useState<boolean | null>(null);
+  const [quorumValue, setQuorumValue] = useState<bigint>(0n);
 
   const [voted, setVoted] = useState(false);
   const [selectedSupport, setSelectedSupport] = useState<VoteSupport | null>(null);
@@ -156,10 +158,21 @@ export default function ProposalDetailClient({ params }: Props) {
     setLoading(true);
     try {
       const p = await governorClient.getProposal(proposalId);
+      const state = await governorClient.getProposalState(proposalId);
       setProposal({
         ...p,
-        state: await governorClient.getProposalState(proposalId),
+        state,
       });
+      
+      // Fetch quorum data for non-pending proposals
+      if (state !== ProposalState.Pending) {
+        const [reached, quorum] = await Promise.all([
+          governorClient.isQuorumReached(proposalId),
+          governorClient.getQuorum(proposalId),
+        ]);
+        setQuorumReached(reached);
+        setQuorumValue(quorum);
+      }
     } catch (err) {
       console.error("Failed to load proposal:", err);
     } finally {
@@ -256,6 +269,14 @@ export default function ProposalDetailClient({ params }: Props) {
   };
 
   const totalVotes = proposal.votesFor + proposal.votesAgainst + proposal.votesAbstain;
+  
+  // Quorum progress calculation
+  const quorumVotes = proposal.votesFor + proposal.votesAbstain;
+  const quorumPercentage = quorumValue > 0n 
+    ? Number((quorumVotes * 100n) / quorumValue) 
+    : 0;
+  const quorumColor = quorumPercentage >= 100 ? "bg-green-500" : 
+                      quorumPercentage >= 50 ? "bg-amber-500" : "bg-red-500";
 
   async function handleCastVote() {
     if (selectedSupport === null || !governorClient || !publicKey || isVoting) return;
@@ -551,6 +572,38 @@ export default function ProposalDetailClient({ params }: Props) {
             <p className="font-mono text-lg font-bold text-slate-500 dark:text-slate-400">{(Number(proposal.votesAbstain) / 10 ** 7).toLocaleString()}</p>
           </div>
         </div>
+
+        {/* Quorum Progress Bar */}
+        {proposal.state !== ProposalState.Pending && quorumValue > 0n && (
+          <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-gray-400 font-medium uppercase">Quorum Progress</p>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                quorumReached 
+                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" 
+                  : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+              }`}>
+                {quorumReached ? "Quorum reached ✓" : "Quorum not yet reached"}
+              </span>
+            </div>
+            <div className="relative h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${quorumColor} transition-all duration-500`}
+                style={{ width: `${Math.min(quorumPercentage, 100)}%` }}
+              />
+              <div 
+                className="absolute top-0 bottom-0 w-0.5 bg-red-500"
+                style={{ left: '100%' }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-gray-500">
+              <span>
+                {quorumPercentage}% ({(Number(quorumVotes) / 10 ** 7).toLocaleString()} / {(Number(quorumValue) / 10 ** 7).toLocaleString()} votes needed)
+              </span>
+              <span>▲ quorum threshold</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Voting UI */}
